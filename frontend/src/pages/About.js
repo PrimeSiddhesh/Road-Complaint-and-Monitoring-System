@@ -11,13 +11,13 @@ const About = () => {
 
       <div className="about-container">
         <section className="about-section">
-          <h2>Our Mission</h2>
-          <p>To empower citizens across India by providing a transparent, digital platform where they can report road infrastructure issues directly to the concerned Taluka authorities. We believe that better roads lead to safer communities, stronger economies, and an enhanced quality of life for every citizen.</p>
+          <h1>Our Vision</h1>
+          <p>Redefining community infrastructure through digital accountability and citizen action.</p>
         </section>
 
         <section className="about-section">
-          <h2>Our Vision</h2>
-          <p>To become India's most trusted citizen-government bridge for road infrastructure grievances — connecting every village, taluka, and district through a single, unified digital portal that ensures accountability, speed, and transparency in road maintenance.</p>
+            <h3>Our Objective</h3>
+            <p>We aim to modernize the grievance redressal process for road maintenance, providing a seamless digital bridge between residents and local authorities for faster and more transparent resolution.</p>
         </section>
 
         <section className="about-section">
@@ -25,13 +25,13 @@ const About = () => {
           <div className="about-features-grid">
             <div className="about-feature-card">
               <div className="about-feature-icon">📸</div>
-              <h4>Photo Evidence Upload</h4>
-              <p>Citizens can upload photos of damaged roads as proof, making complaints verifiable and actionable.</p>
+              <h4>Visual Documentation</h4>
+              <p>Easily upload photographs of road hazards, providing authorities with clear visual evidence for verification.</p>
             </div>
             <div className="about-feature-card">
               <div className="about-feature-icon">🗺️</div>
-              <h4>Interactive Map Marking</h4>
-              <p>Pinpoint the exact road location on an interactive map so authorities know precisely where the issue is.</p>
+              <h4>Precision Geolocation</h4>
+              <p>Identify exact coordinates on an interactive map, ensuring maintenance teams can locate issues without confusion.</p>
             </div>
             <div className="about-feature-card">
               <div className="about-feature-icon">📊</div>
@@ -40,8 +40,8 @@ const About = () => {
             </div>
             <div className="about-feature-card">
               <div className="about-feature-icon">🔐</div>
-              <h4>OTP-Verified Registration</h4>
-              <p>Secure user registration with email OTP verification ensures only genuine citizens can submit complaints.</p>
+              <h4>Secured User Profiles</h4>
+              <p>Our OTP-based registration ensures that only authenticated citizens can submit reports, maintaining system integrity.</p>
             </div>
             <div className="about-feature-card">
               <div className="about-feature-icon">🏛️</div>
@@ -57,34 +57,34 @@ const About = () => {
         </section>
 
         <section className="about-section">
-          <h2>How It Works</h2>
+          <h2>The Workflow</h2>
           <div className="about-steps">
             <div className="about-step">
               <div className="step-number">1</div>
               <div className="step-content">
-                <h4>Register & Verify</h4>
-                <p>Create your account with your name, mobile number, and email. Verify your email via OTP to activate your account.</p>
+                <h4>Identity Setup</h4>
+                <p>Register with your credentials and perform a quick email validation using a unique OTP code.</p>
               </div>
             </div>
             <div className="about-step">
               <div className="step-number">2</div>
               <div className="step-content">
-                <h4>Submit a Complaint</h4>
-                <p>Upload a photo of the road issue, select your State → District → Taluka, describe the problem, mark the location on the map, and submit.</p>
+                <h4>Grievance Submission</h4>
+                <p>Document the road defect with a photo, select your region, and mark the precise location on the live map.</p>
               </div>
             </div>
             <div className="about-step">
               <div className="step-number">3</div>
               <div className="step-content">
-                <h4>Admin Reviews</h4>
-                <p>The verified Taluka Admin receives the complaint, reviews the photo and location, and takes action on the ground.</p>
+                <h4>Official Validation</h4>
+                <p>Localized Taluka Administrators review your submission and initiate the necessary field actions.</p>
               </div>
             </div>
             <div className="about-step">
               <div className="step-number">4</div>
               <div className="step-content">
-                <h4>Resolution & Tracking</h4>
-                <p>Once the road is repaired, the admin marks the complaint as Resolved. Citizens can track every status change on their dashboard.</p>
+                <h4>Monitoring & Completion</h4>
+                <p>Watch as your report moves toward completion. Receive notification once the road is successfully repaired.</p>
               </div>
             </div>
           </div>

@@ -11,9 +11,9 @@ const Home = () => {
       <section className="hero">
         <div className="hero-wrapper">
           <div className="hero-content">
-            <h1>CITIZEN CENTRIC GOVERNANCE</h1>
-            <h2>Way to Connect Citizens with the Government</h2>
-            <p>An innovative platform empowering citizens to report road infrastructure issues and contribute to better communities. Submit complaints with evidence, track progress in real-time, and witness tangible improvements in your village's road infrastructure.</p>
+            <h1>DIGITAL ROAD VIGILANCE</h1>
+            <h2>Empowering Communities through Transparent Governance</h2>
+            <p>A smart infrastructure monitoring portal designed for citizens to report road grievances directly to local authorities. Utilize precise geolocation and photographic evidence to ensure accountability and track the progress of road repairs in your neighborhood.</p>
             <div className="hero-buttons">
               <Link to="/register" className="btn btn-primary">Register / Login</Link>
               <Link to="/map" className="btn btn-secondary">View Status</Link>
@@ -38,15 +38,15 @@ const Home = () => {
           <div className="services-grid">
             <div className="service-card">
               <div className="service-icon">📋</div>
-              <h3>Register / Login</h3>
-              <p>Create your account to access the complaint system and submit road infrastructure grievances.</p>
+              <h3>Get Started</h3>
+              <p>Securely register your account to begin documenting road infrastructure concerns and tracking resolution updates.</p>
               <Link to="/register" className="btn btn-primary" style={{marginTop: '1rem'}}>Get Started</Link>
             </div>
 
             <div className="service-card">
               <div className="service-icon">📍</div>
-              <h3>View Status</h3>
-              <p>Track the status of your complaints in real-time and receive updates on road repairs.</p>
+              <h3>Live Monitoring</h3>
+              <p>Stay informed with real-time updates on your submitted reports through our interactive status-tracking map.</p>
               <Link to="/map" className="btn btn-primary" style={{marginTop: '1rem'}}>View Map</Link>
             </div>
 

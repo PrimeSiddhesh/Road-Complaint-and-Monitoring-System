@@ -10,33 +10,33 @@ const Help = () => {
   const faqs = [
     {
       id: 1,
-      question: 'How do I register for an account?',
-      answer: 'Click Register, fill in your details (name, mobile, email, password), and click Register. It only takes a minute!'
+      question: 'What is the procedure for account registration?',
+      answer: 'Simply navigate to the Sign Up page, enter your basic profile information, and complete the email verification. The entire process is designed for speed and security.'
     },
     {
       id: 2,
-      question: 'How do I submit a complaint?',
-      answer: 'Log in, go to Submit Complaint, upload a photo, describe the issue, select severity level, and click Submit.'
+      question: 'How can I report a new road grievance?',
+      answer: 'After logging in, access the Reporting Portal. You will need to provide a clear photo, a brief description, and the precise location on our digital map.'
     },
     {
       id: 3,
-      question: 'How do I track my complaint status?',
-      answer: 'Go to your Dashboard and click on any complaint to see its current status and all updates.'
+      question: 'Where can I monitor the progress of my report?',
+      answer: 'Your personal Dashboard contains a comprehensive history of all your reports. You can click on any individual entry to view its live status and history.'
     },
     {
       id: 4,
-      question: 'What types of road issues can I report?',
-      answer: 'You can report potholes, cracks, broken markings, damaged signs, poor drainage, street light issues, and any other road infrastructure problems.'
+      question: 'Which categories of road damage are acceptable?',
+      answer: 'Our system accepts reports for potholes, structural cracks, fading lane markings, damaged signage, and any other issues affecting road safety and quality.'
     },
     {
       id: 5,
-      question: 'Is my personal information secure?',
-      answer: 'Yes, all your data is encrypted and secure. We never share your information with unauthorized parties.'
+      question: 'How do you protect my privacy and data?',
+      answer: 'Data security is our top priority. We use industry-standard encryption protocols and strictly adhere to privacy guidelines to keep your identity and information safe.'
     },
     {
       id: 6,
-      question: 'How long does it take to resolve a complaint?',
-      answer: 'Resolution time depends on severity: High - 7-15 days, Medium - 15-30 days. You\'ll receive updates throughout the process.'
+      question: 'What is the typical timeline for problem resolution?',
+      answer: 'The resolution window varies by urgency. High-priority safety hazards are addressed rapidly, while minor repairs are scheduled into local maintenance cycles.'
     }
   ];
 

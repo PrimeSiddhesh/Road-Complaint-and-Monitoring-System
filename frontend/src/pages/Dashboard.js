@@ -63,8 +63,8 @@ const Dashboard = () => {
       <div className="dashboard-header">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <div>
-            <h1>Welcome, {user?.name || 'User'}!</h1>
-            <p>Manage and track all your road complaints from here</p>
+            <h1>Welcome back, {user?.name || 'Citizen'}!</h1>
+            <p>Access your personalized dashboard to monitor and manage your reported infrastructure concerns.</p>
           </div>
         </div>
       </div>
