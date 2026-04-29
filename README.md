@@ -1,148 +1,98 @@
 # 🛣️ Road Complaint & Monitoring System
 
-A full-stack web application that empowers Indian citizens to report road infrastructure issues to their local Taluka authorities and track resolution in real-time.
+**Live Demo:** [https://road-complaint-and-monitoring-syste.vercel.app/](https://road-complaint-and-monitoring-syste.vercel.app/)
 
-## Features
-
-- **OTP-Verified Registration** — Secure email verification for citizen accounts
-- **Photo Evidence Upload** — Upload images of damaged roads as proof
-- **Interactive Map Marking** — Pinpoint exact road location on Leaflet maps
-- **State → District → Taluka** — Cascading dropdowns covering all of India
-- **Real-time Status Tracking** — Pending → In Progress → Resolved
-- **2-Tier Admin System** — Taluka Admins + Super Admin with role-based access
-- **AI Chat Assistant** — Google Gemini-powered chatbot for user guidance
-- **Automated Email Alerts** — Nodemailer notifications for admin verification
-- **Forgot Password** — OTP-based password reset
-- **Contact Form** — Messages emailed directly to the admin
-- **Responsive Design** — Mobile-friendly with premium green theme
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React.js, CSS3, Leaflet Maps |
-| Backend | Node.js, Express.js |
-| Database | MongoDB Atlas (Mongoose) |
-| Auth | JWT + OTP Email Verification |
-| AI | Google Gemini 2.0 Flash |
-| Email | Nodemailer (Gmail SMTP) |
-| Frontend Hosting | Vercel |
-| Backend Hosting | Render |
-
-## Quick Start (Local Development)
-
-### Prerequisites
-- Node.js 18+
-- MongoDB Atlas account
-- Gmail App Password
-- Google Gemini API Key (free at https://aistudio.google.com/apikey)
-
-### Setup
-
-1. Clone the repository
-2. Copy `backend/.env.example` to `backend/.env` and fill in your credentials
-3. Install & run:
-
-```bash
-# Backend
-cd backend
-npm install
-npm run dev
-
-# Frontend (new terminal)
-cd frontend
-npm install
-npm start
-```
-
-4. Open `http://localhost:3000`
+A comprehensive full-stack solution designed to bridge the gap between citizens and local government authorities for road infrastructure maintenance. This platform allows citizens to report road issues with photographic evidence and precise geolocation, while providing a structured administrative workflow for verification and resolution.
 
 ---
 
-## Deployment
+## 🚀 Project Overview
 
-### Architecture
-```
-[Vercel] ← Frontend (React)
-    ↕ API calls
-[Render] ← Backend (Express + MongoDB)
-```
+The **Road Complaint & Monitoring System** is a digital governance initiative that simplifies the process of reporting road-related grievances. It replaces slow, manual reporting with a real-time, transparent system where every complaint is tracked from submission to resolution.
 
-### Step 1: Deploy Backend on Render
-
-1. Push code to GitHub
-2. Go to [render.com](https://render.com) → New **Web Service**
-3. Connect your GitHub repo
-4. Settings:
-   - **Root Directory**: `backend`
-   - **Build Command**: `npm install`
-   - **Start Command**: `node server.js`
-5. Add these **Environment Variables** in the Render dashboard:
-
-| Key | Value |
-|-----|-------|
-| `MONGO_URI` | Your MongoDB Atlas connection string |
-| `JWT_SECRET` | Any strong random string |
-| `EMAIL_USER` | Your Gmail address |
-| `EMAIL_PASS` | Your Gmail App Password |
-| `SUPER_ADMIN_EMAIL` | Super admin email |
-| `SUPER_ADMIN_PASSWORD` | Super admin password |
-| `GEMINI_API_KEY` | Your Google Gemini API key |
-| `FRONTEND_URL` | Your Vercel URL (e.g. `https://your-app.vercel.app`) |
-| `NODE_ENV` | `production` |
-
-6. Deploy → Note your Render URL (e.g. `https://road-complaint-api.onrender.com`)
-
-### Step 2: Deploy Frontend on Vercel
-
-1. Go to [vercel.com](https://vercel.com) → New Project
-2. Import your GitHub repo
-3. Settings:
-   - **Root Directory**: `frontend`
-   - **Framework Preset**: Create React App
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `build`
-4. Add this **Environment Variable**:
-
-| Key | Value |
-|-----|-------|
-| `REACT_APP_API_BASE_URL` | `https://your-render-url.onrender.com/api` |
-
-5. Deploy!
-
-### Step 3: Update CORS
-
-After both are deployed, go back to Render dashboard and set:
-- `FRONTEND_URL` = `https://your-app.vercel.app`
+### Key Working Flow:
+1.  **Citizen Reporting**: Users register and verify their accounts via OTP. They submit complaints by uploading a photo, selecting their location (State → District → Taluka), and pinpointing the exact spot on an interactive map.
+2.  **Administrative Verification**: Complaints are automatically routed to the respective **Taluka Admin**. 
+3.  **Role-Based Management**: 
+    *   **Taluka Admins** can only see and manage complaints within their assigned jurisdiction. They update the status (Pending → In Progress → Resolved).
+    *   **Super Admin** (Main Admin) oversees the entire system, approves new Taluka Admin registrations, and manages global analytics.
+4.  **AI Assistance**: A Gemini-powered AI chatbot is available 24/7 to guide users through the process and answer questions about the system.
+5.  **Resolution Tracking**: Citizens can monitor the progress of their complaints via a personal dashboard and a public live map.
 
 ---
 
-## Default Super Admin
+## 🛠️ Tech Stack & Rationale
 
-On first startup, the system auto-creates a Super Admin:
-- **Username**: `main_admin`
-- **Password**: Set via `SUPER_ADMIN_PASSWORD` env var
+| Technology | Purpose | Why We Used It |
+| :--- | :--- | :--- |
+| **React.js** | Frontend | Enables a dynamic, responsive, and fast user interface with a smooth Single Page Application (SPA) experience. |
+| **Node.js & Express** | Backend | Provides a scalable and efficient environment for handling API requests and managing business logic. |
+| **MongoDB Atlas** | Database | A flexible NoSQL database that easily handles complex complaint data and geographic coordinates. |
+| **Google Gemini AI** | Smart Assistant | Integrated to provide intelligent, human-like responses to user queries, making the portal more accessible. |
+| **Leaflet & OSRM** | Maps & Routing | Used for precise location picking and visualizing complaint density across regions. |
+| **Nodemailer** | Email Service | Handles secure OTP delivery for registration and automated notifications for admin approvals. |
+| **JWT** | Authentication | Ensures secure, token-based access control for users and administrators. |
 
-## Project Structure
+---
 
-```
-├── backend/               ← Deployed on Render
-│   ├── config/            # DB connection, email config
-│   ├── middleware/         # JWT auth middleware
-│   ├── models/            # Mongoose schemas
-│   ├── routes/            # API routes (auth, admin, complaints, chat)
-│   ├── uploads/           # Local image storage
-│   ├── .env.example       # Environment template
-│   └── server.js          # Express entry point
-├── frontend/              ← Deployed on Vercel
-│   ├── src/
-│   │   ├── components/    # Navbar, Footer, ChatWidget
-│   │   ├── pages/         # All page components
-│   │   ├── services/      # API service layer
-│   │   ├── styles/        # Global CSS + theme
-│   │   └── utils/         # Location data, formatters
-│   ├── vercel.json        # Vercel SPA routing config
-│   └── .env.example       # Environment template
-├── .gitignore
+## 🔐 Test Credentials
+
+For evaluation purposes, use the following accounts:
+
+### 👤 User Accounts
+*   **Pune City User**: `dabangraja178@gmail.com` | Pass: `123`
+*   **Satara City User**: `siddheshpawar129@gmail.com` | Pass: `123`
+
+### 👮 Admin Accounts
+*   **Super Admin (Main)**: `siddhesh.s.contact@gmail.com` | Pass: `123`
+*   **Pune Taluka Admin**: `heysid560@gmail.com` | Pass: `123`
+*   **Satara Taluka Admin**: `siddheshpawar785@gmail.com` | Pass: `123`
+
+---
+
+## ⚙️ Maintenance & Configuration (Personal Reference)
+
+This section contains the accounts used for managing the external services integrated into this project:
+
+*   **Google Gemini API Key**: Managed via `dabangraja178@gmail.com`
+*   **MongoDB Atlas**: Hosted on `siddhesh.s.contact@gmail.com`
+*   **Cloudinary Storage**: Hosted on `siddhesh.s.contact@gmail.com`
+*   **Nodemailer (SMTP)**: Configured using `siddheshpawar1196@gmail.com`
+
+---
+
+## 📦 Local Installation
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/PrimeSiddhesh/Road-Complaint-and-Monitoring-System.git
+    ```
+2.  **Setup Backend**:
+    *   Navigate to `/backend`
+    *   `npm install`
+    *   Create `.env` based on `.env.example`
+    *   `npm run dev`
+3.  **Setup Frontend**:
+    *   Navigate to `/frontend`
+    *   `npm install`
+    *   `npm start`
+
+---
+
+## 🏗️ Project Structure
+
+```text
+├── backend/               # Express API & Server Logic
+│   ├── config/            # DB & Service configurations
+│   ├── models/            # Mongoose schemas (User, Complaint, Admin)
+│   ├── routes/            # API endpoints (Auth, Admin, Chat)
+│   └── server.js          # Entry point
+├── frontend/              # React Application
+│   ├── src/components/    # Reusable UI elements (Chat, Map, Navbar)
+│   ├── src/pages/         # Main views (Dashboard, Upload, Admin)
+│   ├── src/services/      # API integration layer
+│   └── vercel.json        # Deployment configuration
 └── README.md
 ```
+
+**Developed by Siddhesh Pawar** 🚀
