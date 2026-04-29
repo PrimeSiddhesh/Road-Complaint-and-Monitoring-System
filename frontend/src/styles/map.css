@@ -1,0 +1,41 @@
+/* Map & Dashboard Specific Styles for Green Theme */
+.map-page { padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; background: var(--bg-page); }
+.map-header { text-align: center; margin-bottom: 2.5rem; }
+.map-header h1 { color: var(--primary-green); font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.map-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+.map-controls {
+  display: flex; gap: 1rem; margin-bottom: 2rem; background: var(--bg-section-alt); 
+  padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm); flex-wrap: wrap;
+}
+.map-controls input, .map-controls select { 
+  flex: 1; min-width: 200px; padding: 0.8rem; border: 1px solid var(--border-color); 
+  border-radius: var(--radius-sm); font-size: 1rem;
+}
+.map-controls input:focus, .map-controls select:focus {
+  outline: none; border-color: var(--secondary-green);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+.map-controls button {
+  background: var(--secondary-green); color: #fff; border: none; padding: 0.8rem 2rem;
+  border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 1rem;
+  transition: var(--transition);
+}
+.map-controls button:hover { background: var(--primary-green); }
+
+.map-container {
+  height: 600px; width: 100%; border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-md); border: 1px solid var(--border-color); z-index: 1;
+}
+
+.map-legend {
+  margin-top: 2rem; background: var(--bg-section-alt); padding: 1.5rem; border-radius: var(--radius-md);
+  display: flex; gap: 2.5rem; align-items: center; justify-content: center;
+  border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+}
+.legend-item { display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); font-weight: 500; }
+.legend-color { width: 18px; height: 18px; border-radius: 50%; display: inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+
+/* Additional layout fixes for sections */
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
