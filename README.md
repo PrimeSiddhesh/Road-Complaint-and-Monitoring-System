@@ -6,18 +6,18 @@ A comprehensive full-stack solution designed to bridge the gap between citizens 
 
 ---
 
-## 🚀 Project Overview
+## 🌟 Motivation & Problem Statement
 
-The **Road Complaint & Monitoring System** is a digital governance initiative that simplifies the process of reporting road-related grievances. It replaces slow, manual reporting with a real-time, transparent system where every complaint is tracked from submission to resolution.
+### The "Why" Behind This Project
+In many developing regions, especially in India, the process of reporting a broken road or a hazardous pothole is often opaque and frustrating. Citizens usually don't know which department to contact, and even when they do, there is no way to track if their complaint is being processed. 
 
-### Key Working Flow:
-1.  **Citizen Reporting**: Users register and verify their accounts via OTP. They submit complaints by uploading a photo, selecting their location (State → District → Taluka), and pinpointing the exact spot on an interactive map.
-2.  **Administrative Verification**: Complaints are automatically routed to the respective **Taluka Admin**. 
-3.  **Role-Based Management**: 
-    *   **Taluka Admins** can only see and manage complaints within their assigned jurisdiction. They update the status (Pending → In Progress → Resolved).
-    *   **Super Admin** (Main Admin) oversees the entire system, approves new Taluka Admin registrations, and manages global analytics.
-4.  **AI Assistance**: A Gemini-powered AI chatbot is available 24/7 to guide users through the process and answer questions about the system.
-5.  **Resolution Tracking**: Citizens can monitor the progress of their complaints via a personal dashboard and a public live map.
+**I built this project to solve three core problems:**
+1.  **Lack of Transparency**: Citizens often feel their voices aren't heard. This system provides a public map and a personal dashboard to show that "Action is being taken."
+2.  **Geographic Mismanagement**: Authorities often get vague descriptions like "road near the temple." By integrating **Leaflet Maps**, we provide exact GPS coordinates, ensuring the repair crew knows exactly where to go.
+3.  **Administrative Bottlenecks**: By implementing a **2-Tier Admin System**, we ensure that local (Taluka) issues are handled by local officials, while the Super Admin can monitor efficiency across the entire state.
+
+### Real-World Impact
+This project transforms a passive citizen into an active participant in governance. It promotes accountability and ensures that infrastructure budget is spent on the most critical, highly-reported issues first.
 
 ---
 
@@ -35,9 +35,21 @@ The **Road Complaint & Monitoring System** is a digital governance initiative th
 
 ---
 
-## 🔐 Test Credentials
+## 🚀 Key Features & Working Flow
 
-For evaluation purposes, use the following accounts:
+1.  **Citizen Reporting**: Users register and verify their accounts via OTP. They submit complaints by uploading a photo, selecting their location (State → District → Taluka), and pinpointing the exact spot on an interactive map.
+2.  **Administrative Verification**: Complaints are automatically routed to the respective **Taluka Admin**. 
+3.  **Role-Based Management**: 
+    *   **Taluka Admins** can only see and manage complaints within their assigned jurisdiction.
+    *   **Super Admin** (Main Admin) oversees the entire system and approves new officials.
+4.  **AI Assistance**: A Gemini-powered AI chatbot guides users 24/7.
+5.  **Resolution Tracking**: Citizens witness the transition from "Pending" to "Resolved" in real-time.
+
+---
+
+## 🔐 Test Credentials
+> [!NOTE]
+> If the password **123** does not work for any account, please try **123456**.
 
 ### 👤 User Accounts
 *   **Pune City User**: `dabangraja178@gmail.com` | Pass: `123`
@@ -51,9 +63,6 @@ For evaluation purposes, use the following accounts:
 ---
 
 ## ⚙️ Maintenance & Configuration (Personal Reference)
-
-This section contains the accounts used for managing the external services integrated into this project:
-
 *   **Google Gemini API Key**: Managed via `dabangraja178@gmail.com`
 *   **MongoDB Atlas**: Hosted on `siddhesh.s.contact@gmail.com`
 *   **Cloudinary Storage**: Hosted on `siddhesh.s.contact@gmail.com`
@@ -61,37 +70,19 @@ This section contains the accounts used for managing the external services integ
 
 ---
 
-## 📦 Local Installation
-
-1.  **Clone the Repository**:
-    ```bash
-    git clone https://github.com/PrimeSiddhesh/Road-Complaint-and-Monitoring-System.git
-    ```
-2.  **Setup Backend**:
-    *   Navigate to `/backend`
-    *   `npm install`
-    *   Create `.env` based on `.env.example`
-    *   `npm run dev`
-3.  **Setup Frontend**:
-    *   Navigate to `/frontend`
-    *   `npm install`
-    *   `npm start`
-
----
-
 ## 🏗️ Project Structure
 
 ```text
-├── backend/               # Express API & Server Logic
-│   ├── config/            # DB & Service configurations
-│   ├── models/            # Mongoose schemas (User, Complaint, Admin)
-│   ├── routes/            # API endpoints (Auth, Admin, Chat)
+├── backend/               # Standalone API Server (Render)
+│   ├── config/            # DB, Email & AI configurations
+│   ├── models/            # Mongoose schemas
+│   ├── routes/            # API endpoints (Auth, Admin, Chat, Complaints)
 │   └── server.js          # Entry point
-├── frontend/              # React Application
-│   ├── src/components/    # Reusable UI elements (Chat, Map, Navbar)
-│   ├── src/pages/         # Main views (Dashboard, Upload, Admin)
-│   ├── src/services/      # API integration layer
-│   └── vercel.json        # Deployment configuration
+├── frontend/              # Standalone React App (Vercel)
+│   ├── src/components/    # Reusable UI (ChatWidget, LocationPicker)
+│   ├── src/pages/         # Main views (Home, Dashboard, Stats)
+│   ├── src/services/      # API communication layer
+│   └── vercel.json        # SPA routing config
 └── README.md
 ```
 
