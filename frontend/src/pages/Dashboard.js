@@ -22,10 +22,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchComplaints();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [complaints, statusFilter, locationFilter]);
 
   const fetchComplaints = async () => {

@@ -35,7 +35,7 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const response = await authService.resetPassword(token, formData.password);
+      await authService.resetPassword(token, formData.password);
       setMessage({ type: 'success', text: 'Password reset successfully!' });
       setTimeout(() => navigate('/login'), 2000);
     } catch (error) {

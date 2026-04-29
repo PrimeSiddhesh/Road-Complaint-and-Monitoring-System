@@ -168,6 +168,7 @@ const AdminDashboard = () => {
   React.useEffect(() => {
     fetchComplaints();
     fetchProfileAndPendingAdmins();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const serverBase = API_BASE_URL.replace(/\/api$/, '');

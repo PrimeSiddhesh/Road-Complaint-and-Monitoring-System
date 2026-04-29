@@ -46,7 +46,7 @@ const Upload = () => {
       setDistricts([]);
       setFormData(prev => ({ ...prev, district: '' }));
     }
-  }, [formData.state]);
+  }, [formData.state, formData.district]);
 
   // Update talukas when district changes
   useEffect(() => {
@@ -62,7 +62,7 @@ const Upload = () => {
       setTalukas([]);
       setFormData(prev => ({ ...prev, taluka: '' }));
     }
-  }, [formData.district, formData.state]);
+  }, [formData.district, formData.state, formData.taluka]);
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -100,28 +100,7 @@ const Upload = () => {
     setErrors(prev => ({ ...prev, coords: '' }));
   };
 
-  const handleRouteChange = (routePath) => {
-    const normalizedRoutePath = Array.isArray(routePath)
-      ? routePath
-          .map((point) => {
-            if (Array.isArray(point) && point.length >= 2) {
-              return { lat: Number(point[0]), lng: Number(point[1]) };
-            }
 
-            if (point && Number.isFinite(Number(point.lat)) && Number.isFinite(Number(point.lng))) {
-              return { lat: Number(point.lat), lng: Number(point.lng) };
-            }
-
-            return null;
-          })
-          .filter((point) => point && Number.isFinite(point.lat) && Number.isFinite(point.lng))
-      : [];
-
-    setFormData(prev => ({
-      ...prev,
-      routePath: normalizedRoutePath
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -163,7 +142,7 @@ const Upload = () => {
         data.append('longitude', formData.lng);
       }
 
-      const response = await complaintService.uploadComplaint(data);
+      await complaintService.uploadComplaint(data);
       navigate('/dashboard');
     } catch (error) {
       setServerError(error.message || 'Upload failed');
