@@ -57,6 +57,21 @@ const sendViaResend = async ({ toEmail, otp, expiryMinutes }) => {
 };
 
 const getSmtpCandidates = async () => {
+  const customHost = String(process.env.SMTP_HOST || "").trim();
+  const customPort = parseInt(process.env.SMTP_PORT, 10);
+
+  if (customHost && customPort) {
+    return [
+      { 
+        name: `${customHost}:${customPort}`, 
+        host: customHost, 
+        port: customPort, 
+        secure: customPort === 465, 
+        requireTLS: customPort !== 465 
+      }
+    ];
+  }
+
   const candidates = [
     { name: "smtp.gmail.com:465", host: "smtp.gmail.com", port: 465, secure: true, requireTLS: false },
     { name: "smtp.gmail.com:587", host: "smtp.gmail.com", port: 587, secure: false, requireTLS: true },
@@ -92,8 +107,8 @@ const createTransporter = ({ user, pass, route }) => nodemailer.createTransport(
   socketTimeout: 15000,
   requireTLS: route.requireTLS,
   tls: {
-    servername: "smtp.gmail.com",
-    rejectUnauthorized: true,
+    servername: route.host.match(/^[0-9.]+$/) ? undefined : route.host,
+    rejectUnauthorized: false,
     minVersion: "TLSv1.2"
   }
 });
