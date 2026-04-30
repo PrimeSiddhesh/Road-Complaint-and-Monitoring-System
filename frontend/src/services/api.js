@@ -157,6 +157,25 @@ export const complaintService = {
     return handleResponse(response);
   },
 
+  analyzeImage: async (imageFile) => {
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('Session expired. Please login again.');
+    }
+
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const response = await fetch(`${API_BASE_URL}/complaints/analyze-image`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    return handleResponse(response);
+  },
+
   getComplaints: async (filters = {}) => {
     const queryParams = new URLSearchParams(filters).toString();
     const response = await fetch(`${API_BASE_URL}/complaints?${queryParams}`, {

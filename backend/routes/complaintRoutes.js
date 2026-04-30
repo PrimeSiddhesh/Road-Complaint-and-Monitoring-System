@@ -10,6 +10,7 @@ const router = express.Router();
 
 const cloudinary = require("../config/cloudinary");
 const crypto = require('crypto');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Ensure uploads directory exists
 const uploadDir = nodePath.join(__dirname, '../uploads');
@@ -34,6 +35,60 @@ function haversine(lat1, lon1, lat2, lon2) {
 
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
+
+// ─── AI Auto-Tagging Endpoint ────────────────────────────────────────────────
+router.post("/analyze-image", authMiddleware, upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No image provided for analysis." });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(503).json({ error: "AI service is currently unavailable." });
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    // Convert multer buffer to Gemini inlineData format
+    const imagePart = {
+      inlineData: {
+        data: req.file.buffer.toString("base64"),
+        mimeType: req.file.mimetype
+      }
+    };
+
+    const prompt = `
+      Analyze this image of a road or infrastructure issue.
+      Identify the type of issue (e.g., Pothole, Waterlogging, Broken road, Fallen tree, Garbage).
+      Return a STRICT JSON response (do not use markdown formatting like \`\`\`json) with these two keys:
+      1. "description": A short, clear 1-2 sentence description of the issue.
+      2. "severity": Must be exactly one of these strings based on visual danger: "Low", "Medium", "High", or "Critical".
+    `;
+
+    const result = await model.generateContent([prompt, imagePart]);
+    const responseText = result.response.text().trim().replace(/```json/g, '').replace(/```/g, '');
+    
+    let analysis;
+    try {
+      analysis = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("Failed to parse Gemini response:", responseText);
+      return res.status(500).json({ error: "Failed to process AI response." });
+    }
+
+    res.json({
+      success: true,
+      description: analysis.description || "",
+      severity: analysis.severity || "Medium"
+    });
+
+  } catch (err) {
+    console.error("AI Analysis Error:", err);
+    res.status(500).json({ error: "Image analysis failed." });
+  }
+});
 
 // Upload a new complaint
 router.post("/upload", authMiddleware, upload.single("image"), async (req, res) => {

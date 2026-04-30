@@ -806,3 +806,5 @@ input:focus, textarea:focus, select:focus {
 }
 .screenshot-info { padding-top: 1rem; text-align: center; }
 .screenshot-info h4 { color: var(--primary-green); margin-bottom: 0.5rem; }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }

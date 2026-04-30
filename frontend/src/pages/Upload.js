@@ -30,6 +30,7 @@ const Upload = () => {
   const [preview, setPreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const [serverError, setServerError] = useState('');
 
   // Update districts when state changes
@@ -81,6 +82,28 @@ const Upload = () => {
     setFormData(prev => ({ ...prev, image: file }));
     setPreview(URL.createObjectURL(file));
     setErrors(prev => ({ ...prev, image: '' }));
+
+    // Trigger AI Auto-Tagging
+    autoAnalyzeImage(file);
+  };
+
+  const autoAnalyzeImage = async (file) => {
+    setAnalyzing(true);
+    try {
+      const result = await complaintService.analyzeImage(file);
+      if (result.success) {
+        setFormData(prev => ({
+          ...prev,
+          description: result.description || prev.description,
+          severity: result.severity || prev.severity
+        }));
+      }
+    } catch (err) {
+      console.error("AI Analysis failed:", err);
+      // We don't block the user if AI fails, they can still enter manually
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -175,6 +198,12 @@ const Upload = () => {
               required
             />
             {preview && <img src={preview} alt="Preview" className="preview-image" />}
+            {analyzing && (
+              <div className="ai-analyzing-indicator" style={{ color: '#2d6a4f', marginTop: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="spinner" style={{ width: '16px', height: '16px', border: '2px solid #2d6a4f', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></span>
+                ✨ AI is analyzing this image...
+              </div>
+            )}
             {errors.image && <span className="error">{errors.image}</span>}
             <p className="help-text">Maximum 5MB. JPG, PNG, GIF formats only.</p>
           </div>
@@ -238,8 +267,9 @@ const Upload = () => {
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Describe the road issue in detail"
+              placeholder={analyzing ? "AI is generating description..." : "Describe the road issue in detail"}
               required
+              style={{ borderColor: analyzing ? '#2d6a4f' : '' }}
             />
             {errors.description && <span className="error">{errors.description}</span>}
           </div>
@@ -250,6 +280,7 @@ const Upload = () => {
               name="severity"
               value={formData.severity}
               onChange={handleInputChange}
+              style={{ borderColor: analyzing ? '#2d6a4f' : '' }}
             >
               <option value="Low">Low - Minor damage, no safety risk</option>
               <option value="Medium">Medium - Noticeable damage, slight safety concern</option>
