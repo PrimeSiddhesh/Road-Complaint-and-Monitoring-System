@@ -1,252 +1,139 @@
-const nodemailer = require("nodemailer");
-const dns = require("dns");
+/**
+ * Email Service — uses Brevo HTTP API (no SMTP ports needed).
+ *
+ * Cloud platforms like Render block SMTP ports (465, 587, 2525).
+ * This module sends emails via Brevo's REST API over standard HTTPS (port 443),
+ * which is NEVER blocked by any cloud provider.
+ *
+ * Required env vars:
+ *   BREVO_API_KEY   — Your Brevo v3 API key (starts with "xkeysib-...")
+ *   SMTP_FROM       — Verified sender email (e.g. "siddheshpawar1196@gmail.com")
+ */
 
-const getEmailAuth = () => {
-  const user = String(process.env.EMAIL_USER || "").trim();
-  // Gmail app passwords are sometimes copied with spaces; normalize before SMTP auth.
-  const pass = String(process.env.EMAIL_PASS || "").replace(/\s+/g, "").trim();
-  const from = process.env.SMTP_FROM || (user ? `Road Complaint <${user}>` : undefined);
+// ─── Brevo HTTP API (Primary — works everywhere) ─────────────────────────────
 
-  return { user, pass, from };
-};
+const sendViaBrevo = async ({ to, subject, textContent, htmlContent }) => {
+  const apiKey = String(process.env.BREVO_API_KEY || "").trim();
+  const senderEmail = String(process.env.SMTP_FROM || process.env.EMAIL_USER || "").trim();
 
-const getResendConfig = () => {
-  const apiKey = String(process.env.RESEND_API_KEY || "").trim();
-  const from = String(process.env.RESEND_FROM || process.env.SMTP_FROM || "").trim();
-  return { apiKey, from };
-};
-
-const sendViaResend = async ({ toEmail, otp, expiryMinutes }) => {
-  const { apiKey, from } = getResendConfig();
-
-  if (!apiKey || !from) {
-    const error = new Error("Missing RESEND_API_KEY or RESEND_FROM");
-    error.code = "MISSING_RESEND_CONFIG";
-    throw error;
+  if (!apiKey) {
+    const err = new Error("BREVO_API_KEY is not set in environment variables");
+    err.code = "MISSING_BREVO_KEY";
+    throw err;
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
+  if (!senderEmail) {
+    const err = new Error("SMTP_FROM (sender email) is not set in environment variables");
+    err.code = "MISSING_SENDER";
+    throw err;
+  }
+
+  const body = {
+    sender: { name: "Road Complaint System", email: senderEmail },
+    to: [{ email: to }],
+    subject,
+    textContent: textContent || undefined,
+    htmlContent: htmlContent || undefined
+  };
+
+  console.log("[EMAIL] Sending via Brevo HTTP API to:", to);
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+      "Accept": "application/json"
     },
-    body: JSON.stringify({
-      from,
-      to: [toEmail],
-      subject: "OTP Verification",
-      text: `Your OTP is ${otp}. It will expire in ${expiryMinutes} minutes.`
-    })
+    body: JSON.stringify(body)
   });
 
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const message = payload?.message || payload?.error || `Resend HTTP ${response.status}`;
-    const error = new Error(message);
-    error.code = "RESEND_SEND_FAILED";
-    throw error;
+    console.error("[EMAIL] ❌ Brevo API error:", payload);
+    const message = payload?.message || payload?.error || `Brevo HTTP ${response.status}`;
+    const err = new Error(message);
+    err.code = "BREVO_SEND_FAILED";
+    throw err;
   }
 
-  console.log("[EMAIL] ✅ OTP sent via Resend", {
-    to: toEmail,
-    id: payload?.id
-  });
-
+  console.log("[EMAIL] ✅ Email sent via Brevo", { to, messageId: payload?.messageId });
   return payload;
 };
 
-const getSmtpCandidates = async () => {
-  const customHost = String(process.env.SMTP_HOST || "").trim();
-  const customPort = parseInt(process.env.SMTP_PORT, 10);
-
-  if (customHost && customPort) {
-    return [
-      { 
-        name: `${customHost}:${customPort}`, 
-        host: customHost, 
-        port: customPort, 
-        secure: customPort === 465, 
-        requireTLS: customPort !== 465 
-      }
-    ];
-  }
-
-  const candidates = [
-    { name: "smtp.gmail.com:465", host: "smtp.gmail.com", port: 465, secure: true, requireTLS: false },
-    { name: "smtp.gmail.com:587", host: "smtp.gmail.com", port: 587, secure: false, requireTLS: true },
-    { name: "smtp-relay.gmail.com:587", host: "smtp-relay.gmail.com", port: 587, secure: false, requireTLS: true }
-  ];
-
-  try {
-    const addresses = await dns.promises.resolve4("smtp.gmail.com");
-    const ipCandidates = addresses.flatMap((ip) => ([
-      { name: `${ip}:465`, host: ip, port: 465, secure: true, requireTLS: false },
-      { name: `${ip}:587`, host: ip, port: 587, secure: false, requireTLS: true }
-    ]));
-    return [...ipCandidates, ...candidates];
-  } catch (error) {
-    console.warn("[EMAIL] resolve4 failed, using hostname routes", {
-      code: error.code,
-      message: error.message
-    });
-    return candidates;
-  }
-};
-
-const createTransporter = ({ user, pass, route }) => nodemailer.createTransport({
-  host: route.host,
-  port: route.port,
-  secure: route.secure,
-  auth: {
-    user,
-    pass
-  },
-  connectionTimeout: 7000,
-  greetingTimeout: 7000,
-  socketTimeout: 15000,
-  requireTLS: route.requireTLS,
-  tls: {
-    servername: route.host.match(/^[0-9.]+$/) ? undefined : route.host,
-    rejectUnauthorized: false,
-    minVersion: "TLSv1.2"
-  }
-});
+// ─── Public Functions ─────────────────────────────────────────────────────────
 
 const sendOtpEmail = async ({ toEmail, otp, expiryMinutes = 5 }) => {
-  const { apiKey } = getResendConfig();
+  // If no Brevo key is configured, log the OTP for local development
+  const apiKey = String(process.env.BREVO_API_KEY || "").trim();
 
-  // Preferred path in cloud: HTTPS email API avoids SMTP port/network blocks.
-  if (apiKey) {
-    try {
-      return await sendViaResend({ toEmail, otp, expiryMinutes });
-    } catch (error) {
-      console.warn("[EMAIL] Resend path failed", {
-        code: error.code,
-        message: error.message
-      });
-      // Do not fall back to SMTP when RESEND_API_KEY is configured.
-      // SMTP can be blocked in cloud and would hide the real Resend error.
-      throw error;
-    }
-  }
-
-  const { user, pass, from } = getEmailAuth();
-
-  if (!user || !pass) {
-    console.log("----------------------------------------");
-    console.log(`[DEV MODE] Email credentials not found.`);
+  if (!apiKey) {
+    console.log("════════════════════════════════════════");
+    console.log(`[DEV MODE] BREVO_API_KEY not found.`);
     console.log(`[DEV MODE] OTP for ${toEmail} is: ${otp}`);
-    console.log("----------------------------------------");
+    console.log("════════════════════════════════════════");
     return { messageId: "dev-mode-otp" };
   }
 
-  const mail = {
-    from,
+  return await sendViaBrevo({
     to: toEmail,
-    subject: "OTP Verification",
-    text: `Your OTP is ${otp}. It will expire in ${expiryMinutes} minutes.`
-  };
-
-  const routes = await getSmtpCandidates();
-  const failures = [];
-
-  for (const route of routes) {
-    try {
-      console.log("[EMAIL] Trying SMTP route:", route.name);
-      const transporter = createTransporter({ user, pass, route });
-      const info = await transporter.sendMail(mail);
-
-      console.log("[EMAIL] ✅ OTP sent", {
-        route: route.name,
-        to: toEmail,
-        messageId: info.messageId,
-        response: info.response
-      });
-
-      return info;
-    } catch (error) {
-      failures.push(`${route.name} -> ${error.code || "UNKNOWN"}: ${error.message}`);
-      console.warn("[EMAIL] Route failed", {
-        route: route.name,
-        code: error.code,
-        message: error.message
-      });
-    }
-  }
-
-  const aggregate = new Error(`All SMTP routes failed. ${failures.join(" | ")}`);
-  aggregate.code = "SMTP_ALL_ROUTES_FAILED";
-  console.error("[EMAIL] ❌ Failed to send OTP email due to SMTP blocks.", aggregate.message);
-  console.log(`[DEMO MODE] Bypassing email error. OTP for ${toEmail} is: ${otp}`);
-  
-  // Return gracefully instead of throwing, so the frontend doesn't crash.
-  return { messageId: "bypassed-smtp-block-otp", bypassed: true };
+    subject: "Your OTP Verification Code",
+    htmlContent: `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #2d6a4f;">Road Complaint System</h2>
+        <p>Your One-Time Password (OTP) for email verification is:</p>
+        <div style="background: #f0f7f4; border: 2px solid #2d6a4f; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2d6a4f;">${otp}</span>
+        </div>
+        <p style="color: #666;">This code will expire in <strong>${expiryMinutes} minutes</strong>.</p>
+        <p style="color: #999; font-size: 12px;">If you didn't request this code, please ignore this email.</p>
+      </div>
+    `,
+    textContent: `Your OTP is ${otp}. It will expire in ${expiryMinutes} minutes.`
+  });
 };
 
 const sendAdminStatusEmail = async ({ toEmail, status, taluka }) => {
-  const { user, pass, from } = getEmailAuth();
+  const apiKey = String(process.env.BREVO_API_KEY || "").trim();
 
-  if (!user || !pass) {
-    console.log(`[DEV MODE] Email creds missing. Would send ${status} email to ${toEmail}`);
+  if (!apiKey) {
+    console.log(`[DEV MODE] Would send ${status} email to ${toEmail}`);
     return;
   }
 
-  const subject = status === 'approved' 
-    ? `Your Taluka Admin Account is Approved`
-    : `Your Taluka Admin Account Request was Declined`;
-    
-  const text = status === 'approved'
+  const subject = status === "approved"
+    ? "Your Taluka Admin Account is Approved"
+    : "Your Taluka Admin Account Request was Declined";
+
+  const text = status === "approved"
     ? `Congratulations! Your admin account for ${taluka} Taluka has been approved by the Main Admin. You can now log into the portal.`
     : `We regret to inform you that your admin account request for ${taluka} Taluka has been declined by the Main Admin.`;
 
-  const mail = {
-    from,
-    to: toEmail,
-    subject,
-    text
-  };
-
-  const routes = await getSmtpCandidates();
-  for (const route of routes) {
-    try {
-      const transporter = createTransporter({ user, pass, route });
-      await transporter.sendMail(mail);
-      return;
-    } catch (error) {
-      console.warn("[EMAIL] Route failed for admin status", error.message);
-    }
+  try {
+    await sendViaBrevo({ to: toEmail, subject, textContent: text });
+  } catch (error) {
+    console.warn("[EMAIL] Failed to send admin status email:", error.message);
   }
 };
 
 const sendContactEmail = async ({ name, email, subject, message }) => {
-  const { user, pass, from } = getEmailAuth();
+  const apiKey = String(process.env.BREVO_API_KEY || "").trim();
+  const adminEmail = String(process.env.SMTP_FROM || process.env.EMAIL_USER || "siddhesh.s.contact@gmail.com").trim();
 
-  // We send the contact message TO the super admin (which is the authenticated user email in this case)
-  const toEmail = user || "siddhesh.s.contact@gmail.com"; 
-
-  if (!user || !pass) {
-    console.log(`[DEV MODE] Email creds missing. Contact message from ${name} (${email}) would go to ${toEmail}`);
+  if (!apiKey) {
+    console.log(`[DEV MODE] Contact message from ${name} (${email}) would go to ${adminEmail}`);
     return;
   }
 
-  const mail = {
-    from,
-    to: toEmail,
-    replyTo: email, // So the admin can click "Reply" and email the citizen directly
-    subject: `New Contact Message: ${subject}`,
-    text: `You have received a new message from the Road Complaint System Contact Form.\n\nFrom: ${name} (${email})\nSubject: ${subject}\n\nMessage:\n${message}`
-  };
-
-  const routes = await getSmtpCandidates();
-  for (const route of routes) {
-    try {
-      const transporter = createTransporter({ user, pass, route });
-      await transporter.sendMail(mail);
-      return;
-    } catch (error) {
-      console.warn("[EMAIL] Route failed for contact message", error.message);
-    }
+  try {
+    await sendViaBrevo({
+      to: adminEmail,
+      subject: `New Contact Message: ${subject}`,
+      textContent: `You have received a new message from the Road Complaint System Contact Form.\n\nFrom: ${name} (${email})\nSubject: ${subject}\n\nMessage:\n${message}`
+    });
+  } catch (error) {
+    console.warn("[EMAIL] Failed to send contact email:", error.message);
   }
 };
 
