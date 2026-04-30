@@ -28,9 +28,9 @@ This project transforms a passive citizen into an active participant in governan
 | **React.js** | Frontend | Enables a dynamic, responsive, and fast user interface with a smooth Single Page Application (SPA) experience. |
 | **Node.js & Express** | Backend | Provides a scalable and efficient environment for handling API requests and managing business logic. |
 | **MongoDB Atlas** | Database | A flexible NoSQL database that easily handles complex complaint data and geographic coordinates. |
-| **Google Gemini AI** | Smart Assistant | Integrated to provide intelligent, human-like responses to user queries, making the portal more accessible. |
+| **Google Gemini 2.5 Flash** | AI Vision & Chat | Powers the smart chatbot and the **Auto-Tagging Vision System** which automatically analyzes complaint photos to generate descriptions and assign severity levels. |
 | **Leaflet & OSRM** | Maps & Routing | Used for precise location picking and visualizing complaint density across regions. |
-| **Nodemailer** | Email Service | Handles secure OTP delivery for registration and automated notifications for admin approvals. |
+| **Brevo HTTP API** | Email Service | Replaces traditional SMTP to guarantee secure, unblocked OTP delivery for registration and automated notifications using cloud-safe HTTPS (Port 443). |
 | **JWT** | Authentication | Ensures secure, token-based access control for users and administrators. |
 
 ---
@@ -38,12 +38,13 @@ This project transforms a passive citizen into an active participant in governan
 ## 🚀 Key Features & Working Flow
 
 1.  **Citizen Reporting**: Users register and verify their accounts via OTP. They submit complaints by uploading a photo, selecting their location (State → District → Taluka), and pinpointing the exact spot on an interactive map.
-2.  **Administrative Verification**: Complaints are automatically routed to the respective **Taluka Admin**. 
-3.  **Role-Based Management**: 
+2.  **✨ AI Vision Auto-Tagging**: Upon uploading an image of a road issue, the system uses **Gemini 2.5 Flash Vision** to instantly analyze the photo, automatically writing the description and determining the severity level (Low to Critical).
+3.  **Administrative Verification**: Complaints are automatically routed to the respective **Taluka Admin**. 
+4.  **Role-Based Management**: 
     *   **Taluka Admins** can only see and manage complaints within their assigned jurisdiction.
     *   **Super Admin** (Main Admin) oversees the entire system and approves new officials.
-4.  **AI Assistance**: A Gemini-powered AI chatbot guides users 24/7.
-5.  **Resolution Tracking**: Citizens witness the transition from "Pending" to "Resolved" in real-time.
+5.  **AI Chatbot Assistance**: A Gemini-powered smart assistant guides users 24/7.
+6.  **Resolution Tracking**: Citizens witness the transition from "Pending" to "Resolved" in real-time.
 
 ---
 
@@ -66,7 +67,7 @@ This project transforms a passive citizen into an active participant in governan
 *   **Google Gemini API Key**: Managed via `dabangraja178@gmail.com`
 *   **MongoDB Atlas**: Hosted on `siddhesh.s.contact@gmail.com`
 *   **Cloudinary Storage**: Hosted on `siddhesh.s.contact@gmail.com`
-*   **Nodemailer (SMTP)**: Configured using `siddheshpawar1196@gmail.com`
+*   **Brevo HTTP API**: Configured using `siddheshpawar1196@gmail.com`
 
 ---
 
