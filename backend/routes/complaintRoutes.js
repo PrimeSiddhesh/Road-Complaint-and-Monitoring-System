@@ -49,7 +49,7 @@ router.post("/analyze-image", authMiddleware, upload.single("image"), async (req
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // Convert multer buffer to Gemini inlineData format
     const imagePart = {

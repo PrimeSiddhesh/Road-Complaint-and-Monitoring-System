@@ -62,7 +62,7 @@ const getModel = () => {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  chatModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  chatModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   return chatModel;
 };
 
