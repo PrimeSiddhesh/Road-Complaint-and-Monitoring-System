@@ -193,8 +193,8 @@ router.post("/send-otp", async (req, res) => {
       nodeEnv: process.env.NODE_ENV,
       emailUser: process.env.EMAIL_USER ? "SET" : "MISSING",
       emailPass: process.env.EMAIL_PASS ? "SET" : "MISSING",
-      resendApiKey: process.env.RESEND_API_KEY ? "SET" : "MISSING",
-      resendFrom: process.env.RESEND_FROM ? "SET" : "MISSING"
+      brevoApiKey: process.env.BREVO_API_KEY ? "SET" : "MISSING",
+      smtpFrom: process.env.SMTP_FROM ? "SET" : "MISSING"
     });
   }
 });

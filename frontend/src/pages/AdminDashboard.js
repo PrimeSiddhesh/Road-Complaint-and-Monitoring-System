@@ -15,9 +15,17 @@ const AdminDashboard = () => {
   
   const [adminProfile, setAdminProfile] = useState(null);
   const [pendingAdmins, setPendingAdmins] = useState([]);
+  const [stats, setStats] = useState(null);
 
   const handleChange = e => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const newFilters = { ...filters, [name]: value };
+    setFilters(newFilters);
+    if (name === 'status') {
+      adminService.getComplaints(newFilters)
+        .then(data => setComplaints(data.complaints || []))
+        .catch(err => console.error(err));
+    }
   };
 
   const clearFilters = () => {
@@ -44,6 +52,15 @@ const AdminDashboard = () => {
       }
     } catch (err) {
       console.error('fetch profile/pending admins', err);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const data = await adminService.getStats();
+      setStats(data);
+    } catch (err) {
+      console.error('fetch stats', err);
     }
   };
 
@@ -168,6 +185,7 @@ const AdminDashboard = () => {
   React.useEffect(() => {
     fetchComplaints();
     fetchProfileAndPendingAdmins();
+    fetchStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -217,6 +235,27 @@ const AdminDashboard = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {stats && (
+        <div className="dashboard-stats" style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+          <div className="stat-card" style={{ flex: '1 1 200px', padding: '1.5rem', background: 'var(--bg-section)', borderRadius: '12px', border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--text-secondary)' }}>Total Complaints</h3>
+            <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: 'var(--primary-green)' }}>{stats.totalComplaints}</p>
+          </div>
+          <div className="stat-card" style={{ flex: '1 1 200px', padding: '1.5rem', background: 'var(--bg-section)', borderRadius: '12px', border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--text-secondary)' }}>Pending</h3>
+            <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#f59e0b' }}>{stats.pendingComplaints}</p>
+          </div>
+          <div className="stat-card" style={{ flex: '1 1 200px', padding: '1.5rem', background: 'var(--bg-section)', borderRadius: '12px', border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--text-secondary)' }}>In Progress</h3>
+            <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#3b82f6' }}>{stats.inProgressComplaints}</p>
+          </div>
+          <div className="stat-card" style={{ flex: '1 1 200px', padding: '1.5rem', background: 'var(--bg-section)', borderRadius: '12px', border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: 'var(--text-secondary)' }}>Resolved</h3>
+            <p style={{ fontSize: '2.5rem', margin: 0, fontWeight: 'bold', color: '#10b981' }}>{stats.resolvedComplaints}</p>
           </div>
         </div>
       )}

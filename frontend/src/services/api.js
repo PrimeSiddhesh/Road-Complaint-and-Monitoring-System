@@ -77,8 +77,8 @@ export const authService = {
       const backend = error?.response?.data || {};
       const message = backend?.details || backend?.error || backend?.message || error.message || 'Failed to send OTP';
       const code = backend?.code ? ` (${backend.code})` : '';
-      const debug = backend?.resendApiKey || backend?.resendFrom
-        ? ` [resendApiKey=${backend.resendApiKey || "NA"}, resendFrom=${backend.resendFrom || "NA"}]`
+      const debug = backend?.brevoApiKey || backend?.smtpFrom
+        ? ` [brevoApiKey=${backend.brevoApiKey || "NA"}, smtpFrom=${backend.smtpFrom || "NA"}]`
         : '';
       const finalMessage = `${message}${code}${debug}`;
       throw new Error(finalMessage);

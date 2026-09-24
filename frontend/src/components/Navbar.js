@@ -58,13 +58,15 @@ const Navbar = () => {
           ) : user?.role === 'superadmin' ? (
             // SUPER ADMIN
             <>
-              <li><Link to="/admin">Main Admin Panel</Link></li>
+              <li><Link to="/admin">Dashboard</Link></li>
+              <li><Link to="/admin/profile">Profile</Link></li>
               <li><button onClick={handleLogout} className="btn-logout">Logout</button></li>
             </>
           ) : user?.role === 'admin' ? (
             // TALUKA ADMIN
             <>
-              <li><Link to="/admin">Taluka Admin Panel</Link></li>
+              <li><Link to="/admin">Dashboard</Link></li>
+              <li><Link to="/admin/profile">Profile</Link></li>
               <li><button onClick={handleLogout} className="btn-logout">Logout</button></li>
             </>
           ) : (
